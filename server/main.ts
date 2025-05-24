@@ -5,8 +5,10 @@ import * as path from "@std/path";
 import { Port } from "../lib/utils/index.ts";
 import listInsights from "./operations/list-insights.ts";
 import lookupInsight from "./operations/lookup-insight.ts";
+import createInsight from "./operations/create-insight.ts";
+import { createTable } from "$tables/insights.ts";
 
-console.log("Loading configuration");
+//console.log("Loading configuration");
 
 const env = {
   port: Port.parse(Deno.env.get("SERVER_PORT")),
@@ -14,12 +16,13 @@ const env = {
 
 const dbFilePath = path.resolve("tmp", "db.sqlite3");
 
-console.log(`Opening SQLite database at ${dbFilePath}`);
+//console.log(`Opening SQLite database at ${dbFilePath}`);
 
 await Deno.mkdir(path.dirname(dbFilePath), { recursive: true });
 const db = new Database(dbFilePath);
+db.run(createTable);
 
-console.log("Initialising server");
+//console.log("Initialising server");
 
 const router = new oak.Router();
 
@@ -41,8 +44,22 @@ router.get("/insights/:id", (ctx) => {
   ctx.response.status = 200;
 });
 
-router.get("/insights/create", (ctx) => {
-  // TODO
+router.post("/insights", async (ctx) => {
+  ctx.response.status = 200;
+  ctx.response.body = { message: "Insight created" };
+  try {
+    const insight = await ctx.request.body.json();
+    console.log("Creating insight", insight);
+
+    createInsight({ db, insight });
+
+    ctx.response.status = 200;
+    ctx.response.body = { message: "Insight created" };
+  } catch (error) {
+    console.error("create insights", error);
+    ctx.response.status = 500;
+    ctx.response.body = { error: "Internal Server Error" };
+  }
 });
 
 router.get("/insights/delete", (ctx) => {
