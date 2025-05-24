@@ -9,7 +9,12 @@
     },
     "dev:server": "cd server && deno task dev",
     "dev:client": "cd client && deno task dev",
-    "test:client": "cd client && deno task test"
+    "test:server": "cd server && deno test --allow-read --allow-write --allow-env --allow-ffi",
+    "test:client": "cd client && deno task test",
+    "test": {
+      "command": "",
+      "dependencies": ["test:server", "test:client"]
+    }
   },
   "compilerOptions": {
     "strict": true,
