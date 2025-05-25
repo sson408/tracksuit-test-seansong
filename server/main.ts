@@ -6,6 +6,7 @@ import { Port } from "../lib/utils/index.ts";
 import listInsights from "./operations/list-insights.ts";
 import lookupInsight from "./operations/lookup-insight.ts";
 import createInsight from "./operations/create-insight.ts";
+import deleteInsight from "./operations/delete-insight.ts";
 import { createTable } from "$tables/insights.ts";
 
 //console.log("Loading configuration");
@@ -45,8 +46,6 @@ router.get("/insights/:id", (ctx) => {
 });
 
 router.post("/insights", async (ctx) => {
-  ctx.response.status = 200;
-  ctx.response.body = { message: "Insight created" };
   try {
     const insight = await ctx.request.body.json();
     console.log("Creating insight", insight);
@@ -62,8 +61,23 @@ router.post("/insights", async (ctx) => {
   }
 });
 
-router.get("/insights/delete", (ctx) => {
-  // TODO
+router.delete("/insights/:id", (ctx) => {
+  try {
+    const insightId = Number(ctx.params.id);
+    if (isNaN(insightId)) {
+      ctx.response.status = 400;
+      ctx.response.body = { error: "Invalid insight ID" };
+      return;
+    }
+    deleteInsight({ db, id: insightId });
+    ctx.response.status = 200;
+    ctx.response.body = { message: "Insight deleted" };
+  } catch (error) {
+    console.error("delete insights", error);
+    ctx.response.status = 500;
+    ctx.response.body = { error: "Internal Server Error" };
+    return;
+  }
 });
 
 const app = new oak.Application();
