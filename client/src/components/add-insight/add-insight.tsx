@@ -3,59 +3,28 @@ import { BRANDS } from "../../lib/consts.ts";
 import { Button } from "../button/button.tsx";
 import { Modal, type ModalProps } from "../modal/modal.tsx";
 import styles from "./add-insight.module.css";
+import { useAddInsight } from "../../hooks/useAddInsight.ts";
 
 type AddInsightProps = ModalProps & {
   onSuccess?: () => void;
 };
 
 export const AddInsight = (props: AddInsightProps) => {
-  const [brandId, setBrandId] = useState(BRANDS[0].id); //default to brand 1
-  const [text, setText] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { brandId, setBrandId, text, setText, error, loading, addInsight } =
+    useAddInsight();
 
-  const addInsight = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!text.trim()) {
-      setError("Please enter an insight");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    try {
-      const payload = {
-        brand: brandId,
-        text,
-        createdAt: new Date().toISOString(),
-      };
-      const response = await fetch("/api/insights", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add insight");
-      }
-      setText("");
+    addInsight(() => {
       props.onClose();
       props.onSuccess?.();
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unknown error occurred");
-      }
-    } finally {
-      setLoading(false);
-    }
+    });
   };
+
   return (
     <Modal {...props}>
       <h1 className={styles.heading}>Add a new insight</h1>
-      <form className={styles.form} onSubmit={addInsight}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         {error && (
           <p className={styles.error} role="alert">
             {error}
