@@ -18,7 +18,7 @@
   color: var(--color-text-light);
 }
 
-.field-input {
+.fieldInput {
   font: var(--text-md);
   color: var(--color-text);
   border: 1px solid var(--color-grey-300);
@@ -28,4 +28,10 @@
 
 .submit {
   align-self: flex-end;
+}
+
+.error {
+  color: var(--color-red-700);
+  font: var(--text-sm);
+  margin-top: var(--size-2);
 }
