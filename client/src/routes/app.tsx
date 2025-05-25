@@ -55,7 +55,11 @@ export const App = () => {
       {loading ? (
         <p>Loading insights...</p>
       ) : (
-        <Insights className={styles.insights} insights={insights} />
+        <Insights
+          className={styles.insights}
+          insights={insights}
+          onDelete={fetchInsights}
+        />
       )}
     </main>
   );

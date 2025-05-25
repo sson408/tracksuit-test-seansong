@@ -34,3 +34,9 @@
   height: var(--size-5);
   cursor: pointer;
 }
+
+.error {
+  color: var(--color-red-700);
+  font: var(--text-sm);
+  margin-top: var(--size-2);
+}
