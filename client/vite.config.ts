@@ -26,7 +26,7 @@ export default defineConfig({
       "/api": {
         target: `${env.servereBaseUrl}:${env.serverPort}`,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path: string) => path.replace(/^\/api/, ""),
       },
     },
   },
